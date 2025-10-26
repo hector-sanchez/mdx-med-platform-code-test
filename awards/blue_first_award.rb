@@ -4,11 +4,10 @@ require_relative '../award'
 class BlueFirstAward < Award
   def update_quality!
     # Blue First awards increase in quality as they get older
-    self.quality += 1 if quality < 50
-
-    self.expires_in -= 1
+    readjust_quality!(multipler: 1)
+    decrement_expiration!
 
     # After expiration, still increases in quality (never above 50)
-    self.quality += 1 if expires_in < 0 && quality < 50
+    readjust_quality!(multipler: 1) if expired?
   end
 end

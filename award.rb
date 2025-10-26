@@ -2,6 +2,8 @@ class Award
   attr_accessor :name, :expires_in, :quality
 
   MIN_QUANTITY = 0
+  DEFAULT_MAX_QUANTITY = 50
+  DEFAULT_EXPIRY_DECREMENT_STEP = 1
 
   def initialize(name, expires_in, quality)
     @name = name
@@ -15,17 +17,17 @@ class Award
   end
 
   def update_quality!
-    recalculate_quality_and_expiration
+    decrement_expiration!
+    readjust_quality!
   end
 
   protected
 
-  def recalculate_quality_and_expiration(quality_multipler: -1, max_quality: 50, expiration_decrement: 1)
-    @expires_in -= expiration_decrement
-    recalculate_quality(multipler: quality_multipler, max_quality: max_quality)
+  def decrement_expiration!
+    @expires_in -= DEFAULT_EXPIRY_DECREMENT_STEP
   end
 
-  def recalculate_quality(multipler: -1, max_quality: 50)
+  def readjust_quality!(multipler: -1, max_quality: DEFAULT_MAX_QUANTITY)
     @quality += multipler
     @quality = [[@quality, MIN_QUANTITY].max, max_quality].min
   end
